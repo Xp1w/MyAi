@@ -1,0 +1,34 @@
+name: Build APK
+
+on:
+  workflow_dispatch:  # تشغيل يدوي فقط
+
+jobs:
+  build:
+    runs-on: macos-latest  # أفضل للذاكرة
+    
+    steps:
+    - name: تحميل الكود
+      uses: actions/checkout@v4
+      
+    - name: تثبيت بايثون
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: تثبيت Flet فقط
+      run: pip install flet
+      
+    - name: تثبيت Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.2'
+        
+    - name: بناء APK
+      run: flet build apk --verbose
+      
+    - name: رفع الملف الناتج
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk-file
+        path: build/apk/*.apk
